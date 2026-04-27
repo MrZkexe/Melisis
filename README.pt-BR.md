@@ -33,11 +33,11 @@ sudo apt install fail2ban wget -y
 ```
 Depois, execute o instalador:
 ```bash
-sudo curl -sL https://link.com | bash
+sudo curl -sL https://raw.githubusercontent.com/MrZkexe/Melisis/refs/heads/main/setup.sh | bash
 
 Ou, se preferir clonar manualmente:
 ```bash
-git clone https://link.com    
+git clone https://github.com/MrZkexe/Melisis.git
 cd pasta    
 chmod +x setup.sh    
 sudo ./setup.sh
@@ -53,11 +53,11 @@ sudo dnf install fail2ban wget -y
 
 Depois:
 ```bash
-sudo curl -sL https://link.com | bash
+sudo curl -sL https://raw.githubusercontent.com/MrZkexe/Melisis/refs/heads/main/setup.sh | bash
 ```
 Ou:
 ```bash
-git clone https://link.com    
+git clone https://github.com/MrZkexe/Melisis.git
 cd pasta    
 chmod +x setup.sh    
 sudo ./setup.sh
@@ -70,11 +70,11 @@ sudo pacman -Syu fail2ban wget
 ```
 Depois:
 ```bash
-sudo curl -sL https://link.com | bash
+sudo curl -sL https://raw.githubusercontent.com/MrZkexe/Melisis/refs/heads/main/setup.sh | bash
 ```
 Ou:
 ```bash
-git clone https://link.com    
+git clone https://github.com/MrZkexe/Melisis.git
 cd pasta    
 chmod +x setup.sh    
 sudo ./setup.sh
