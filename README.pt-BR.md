@@ -34,7 +34,7 @@ sudo apt install fail2ban wget -y
 Depois, execute o instalador:
 ```bash
 sudo curl -sL https://raw.githubusercontent.com/MrZkexe/Melisis/refs/heads/main/setup.sh | bash
-
+```
 Ou, se preferir clonar manualmente:
 ```bash
 git clone https://github.com/MrZkexe/Melisis.git
