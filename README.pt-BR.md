@@ -181,7 +181,6 @@ Define o comportamento do honeypot.
 ##### Mode 2 — Interativo com bloqueio
 
 - Permite acesso a um shell falso
-- Registra comandos do invasor
 - Bloqueia após desconexão
 
 > Melhor equilíbrio entre segurança e coleta de dados

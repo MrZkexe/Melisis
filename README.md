@@ -183,7 +183,6 @@ Defines the honeypot behavior.
 ##### Mode 2 — Interactive with blocking
 
 - Allows access to a fake shell
-- Logs attacker commands
 - Bans after disconnection
 
 > Best balance between security and data collection
