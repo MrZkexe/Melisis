@@ -30,7 +30,7 @@ fi
 
 FILE="./melisis"
 SAVEFILE="/usr/bin/melisis"
-DOWNLOADFILE=""
+DOWNLOADFILE="https://github.com/MrZkexe/Melisis/releases/download/binario/melisis"
 
 log_info "Starting Melisis installation process..."
 

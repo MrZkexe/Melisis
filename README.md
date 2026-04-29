@@ -19,6 +19,7 @@ To run the honeypot, you need:
 
 - `fail2ban`
 - `wget`
+- `curl`
 - A Linux system with **systemd**
 
 > This project was developed with Debian-based systems in mind, but it works on other distributions with minor adjustments.
@@ -30,7 +31,7 @@ To run the honeypot, you need:
 ### Debian / Ubuntu
 ```bash
 sudo apt update    
-sudo apt install fail2ban wget -y
+sudo apt install fail2ban wget curl -y
 ```
 Then run the installer:
 ```bash
@@ -47,7 +48,7 @@ sudo ./setup.sh
 ### Red Hat / CentOS / Fedora
 ```bash
 sudo dnf install epel-release -y      
-sudo dnf install fail2ban wget -y
+sudo dnf install fail2ban wget curl -y
 ```
 > In some CentOS/RHEL versions, `fail2ban` is available via the EPEL repository.
 
@@ -66,7 +67,7 @@ sudo ./setup.sh
 
 ### Arch Linux
 ```bash
-sudo pacman -Syu fail2ban wget
+sudo pacman -Syu fail2ban wget curl
 ```
 Then:
 ```bash

