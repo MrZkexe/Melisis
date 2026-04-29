@@ -30,12 +30,12 @@ To run the honeypot, you need:
 
 ### Debian / Ubuntu
 ```bash
-sudo apt update    
+sudo apt update
 sudo apt install fail2ban wget curl -y
 ```
 Then run the installer:
 ```bash
-sudo curl -sL https://raw.githubusercontent.com/MrZkexe/Melisis/refs/heads/main/setup.sh | bash
+ curl -sL https://raw.githubusercontent.com/MrZkexe/Melisis/refs/heads/main/setup.sh | sudo bash
 ```
 Or, if you prefer to clone manually:
 ```bash
@@ -54,7 +54,7 @@ sudo dnf install fail2ban wget curl -y
 
 Then:
 ```bash
-sudo curl -sL https://raw.githubusercontent.com/MrZkexe/Melisis/refs/heads/main/setup.sh | bash
+curl -sL https://raw.githubusercontent.com/MrZkexe/Melisis/refs/heads/main/setup.sh | sudo bash
 ```
 Or:
 ```bash
@@ -71,7 +71,7 @@ sudo pacman -Syu fail2ban wget curl
 ```
 Then:
 ```bash
-sudo curl -sL https://raw.githubusercontent.com/MrZkexe/Melisis/refs/heads/main/setup.sh | bash
+curl -sL https://raw.githubusercontent.com/MrZkexe/Melisis/refs/heads/main/setup.sh | sudo bash
 ```
 Or:
 ```bash
