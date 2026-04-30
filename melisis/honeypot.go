@@ -61,6 +61,10 @@ func (trap Trap) logLoginAttempt(meta ssh.ConnMetadata, password []byte) {
 
 func (trap Trap) handleFailedHandshake() error {
 	clientIP := IPAddress{Address: trap.Connection.RemoteAddr()}.ExtractIP()
+	if trap.Mode >= 3 {
+		color.BgRGB(255, 145, 0).Printf("IP: %s successfully not blocked'\n", clientIP)
+		return nil
+	}
 	if trap.Logger.RegisterBan(clientIP) == nil {
 		color.Set(color.FgWhite, color.Bold)
 		color.BgRGB(100, 0, 0).Printf("IP: %s successfully blocked'\n", clientIP)
