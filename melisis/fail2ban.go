@@ -12,6 +12,7 @@ import (
 type DependencyManager struct {
 	Fail2BanBinary string
 	LogFilePath    string
+	LogCommandPath string
 }
 
 func (manager DependencyManager) CheckAndInstall() error {
@@ -83,5 +84,6 @@ func (manager DependencyManager) getRequiredFiles() map[string]string {
 		"/etc/fail2ban/jail.d/melisis.conf":   jailContent,
 		"/etc/fail2ban/filter.d/melisis.conf": filterContent,
 		manager.LogFilePath:                   "",
+		manager.LogCommandPath:                "",
 	}
 }
