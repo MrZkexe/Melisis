@@ -64,13 +64,16 @@ func (trap Trap) logLoginAttempt(meta ssh.ConnMetadata, password []byte) {
 func (trap Trap) handleFailedHandshake() error {
 	clientIP := IPAddress{Address: trap.Connection.RemoteAddr()}.ExtractIP()
 	if trap.Mode >= 3 {
-		color.BgRGB(255, 145, 0).Printf("IP: %s successfully not blocked'\n", clientIP)
+		color.BgRGB(255, 145, 0).Printf("IP: %s successfully not blocked", clientIP)
+		color.Unset()
+		fmt.Printf("\n")
 		return nil
 	}
 	if trap.Logger.RegisterBan(clientIP) == nil {
 		color.Set(color.FgWhite, color.Bold)
-		color.BgRGB(100, 0, 0).Printf("IP: %s successfully blocked'\n", clientIP)
+		color.BgRGB(100, 0, 0).Printf("IP: %s successfully blocked", clientIP)
 		color.Unset()
+		fmt.Printf("\n")
 	}
 	return fmt.Errorf("IP connection: %s not completed or cut off", clientIP)
 }
@@ -156,13 +159,37 @@ type ShellEmulator struct {
 func (emulator *ShellEmulator) Loop() {
 	emulator.wellcome()
 	emulator.writePrompt()
+
 	buffer := make([]byte, 1024)
+
+	timeout := time.NewTimer(60 * time.Second)
+	done := make(chan struct{})
+
+	defer close(done)
+	defer timeout.Stop()
+
+	go func() {
+		select {
+		case <-timeout.C:
+			emulator.Channel.Write([]byte("\r\nconnection timeout.\r\n"))
+			emulator.Channel.Close()
+		case <-done:
+			return
+		}
+	}()
 
 	for {
 		bytesRead, err := emulator.Channel.Read(buffer)
 		if err != nil {
 			break
 		}
+		if !timeout.Stop() {
+			select {
+			case <-timeout.C:
+			default:
+			}
+		}
+		timeout.Reset(60 * time.Second)
 		if emulator.processInputBuffer(buffer, bytesRead) {
 			break
 		}
@@ -213,15 +240,27 @@ func (emulator *ShellEmulator) executeCommand() {
 }
 
 func (emulator *ShellEmulator) CommandLogger(command string) {
-	fileLog, err := os.OpenFile("/var/log/MelisisCommandsLog.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
+	fileLog, err := os.OpenFile(
+		"/var/log/MelisisCommandsLog.txt",
+		os.O_APPEND|os.O_CREATE|os.O_WRONLY,
+		0666,
+	)
 	if err != nil {
 		log.Println("Error writing command in log")
+		return
 	}
+
 	defer fileLog.Close()
+
 	termlog := io.MultiWriter(fileLog, os.Stdout)
-	log.SetOutput(termlog)
+	logger := log.New(termlog, "", log.LstdFlags)
 	color.Set(color.FgYellow)
-	log.Printf("IP address: %s used the command: %s", emulator.ClientIP.ExtractIP(), command)
+
+	logger.Printf(
+		"IP address: %s used the command: %s",
+		emulator.ClientIP.ExtractIP(),
+		command,
+	)
 	color.Unset()
 }
 
@@ -232,11 +271,9 @@ func (emulator *ShellEmulator) generateResponse(commandLine string) string {
 	}
 	switch commandLine {
 	case "help":
-		return `The help command was blocked in this installation; please read the manual on the Supla kernel website.`
+		return "\r\nThe help command was blocked in this installation; please read the manual on the Supla kernel website.\r\n"
 	default:
-		return fmt.Sprintf(`
-			bash: %s command not found.
-			`, commandLine)
+		return fmt.Sprintf("\r\nbash: %s command not found.\r\n", commandLine)
 	}
 }
 

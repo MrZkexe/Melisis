@@ -1,3 +1,4 @@
+Se tiver curiosidade para ver o processo de criação dessa ferramenta [click aqui.](https://zksec.xyz/post/?postuuid=7c059472-d0ae-4660-954c-4e3633c82027)
 <center>
 <img src="icone.png">
 </center>
@@ -113,6 +114,7 @@ Após a instalação, os seguintes arquivos serão criados:
 
 - `/etc/Melisis/melisis.conf` → **Configuração do honeypot**
 - `/var/log/Melisis.txt` → **Log de bloqueios**
+- `/var/log/MelisisCommandsLog.txt` -> **Log dos comandos na shellfake**
 - `/etc/fail2ban/jail.d/melisis.conf` → **Regras de bloqueio**
 - `/etc/fail2ban/filter.d/melisis.conf` → **Filtro utilizado pelo fail2ban**
 
@@ -226,13 +228,23 @@ action = iptables-allports[name=MelisisHoneypot]
 ## Monitoramento
 
 Acompanhar logs em tempo real:
+IPs que foram banidos
 ```bash
 tail -f /var/log/Melisis.txt
 ```
-Ver IPs banidos:
+Ver IPs banidos atuais:
 ```bash
 sudo fail2ban-client status melisis
 ```
+Ver tentativas de comandos
+```bash
+tail -f /var/log/MelisisCommandsLog.txt
+```
+Todos o logs em tempo real
+```bash
+sudo journalctl -u melisis -n 50 -f
+```
+
 ---
 
 > Considerações finais.
