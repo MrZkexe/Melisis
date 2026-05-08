@@ -64,23 +64,44 @@ func (trap Trap) logLoginAttempt(meta ssh.ConnMetadata, password []byte) {
 func (trap Trap) handleFailedHandshake() error {
 	clientIP := IPAddress{Address: trap.Connection.RemoteAddr()}.ExtractIP()
 	if trap.Mode >= 3 {
-		color.BgRGB(255, 145, 0).Printf("IP: %s successfully not blocked", clientIP)
+		color.BgRGB(255, 145, 0).Printf("IP: %s Connection not completed.", clientIP)
 		color.Unset()
 		fmt.Printf("\n")
 		return nil
 	}
-	if trap.Logger.RegisterBan(clientIP) == nil {
-		color.Set(color.FgWhite, color.Bold)
-		color.BgRGB(100, 0, 0).Printf("IP: %s successfully blocked", clientIP)
-		color.Unset()
-		fmt.Printf("\n")
-	}
+	trap.Ban(clientIP, fmt.Sprintf("IP: %s successfully blocked", clientIP))
 	return fmt.Errorf("IP connection: %s not completed or cut off", clientIP)
 }
 
+func (trap Trap) Ban(ip net.IP, messages string) {
+	if trap.Mode < 3 {
+		trap.Logger.RegisterBan(ip)
+		color.Set(color.FgWhite, color.Bold)
+		color.BgRGB(100, 0, 0).Println(messages)
+		color.Unset()
+	}
+}
+
 func (trap Trap) processChannels(channels <-chan ssh.NewChannel, user string) error {
-	for channel := range channels {
+	timeout := time.NewTimer(2 * time.Second)
+	hasSession := false
+	defer timeout.Stop()
+
+	select {
+	case channel, ok := <-channels:
+		if !ok {
+			return nil
+		}
+		hasSession = true
 		trap.handleSingleChannel(channel, user)
+		select {}
+	case <-timeout.C:
+		if !hasSession {
+			clientIP := IPAddress{Address: trap.Connection.RemoteAddr()}.ExtractIP()
+			trap.Connection.Close()
+			trap.Ban(clientIP, fmt.Sprintf("IP: %s successfully No-shell", clientIP))
+			return fmt.Errorf("connection closed: authenticated without shell (%s)", clientIP)
+		}
 	}
 	return nil
 }
