@@ -275,7 +275,7 @@ func (emulator *ShellEmulator) CommandLogger(command string) {
 
 	termlog := io.MultiWriter(fileLog, os.Stdout)
 	logger := log.New(termlog, "", log.LstdFlags)
-	color.Set(color.FgYellow)
+	color.Set(color.FgMagenta)
 
 	logger.Printf(
 		"IP address: %s used the command: %s",
