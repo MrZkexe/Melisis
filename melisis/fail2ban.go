@@ -77,7 +77,7 @@ func (manager DependencyManager) setPermissionsIfNeeded(filepath string) {
 }
 
 func (manager DependencyManager) getRequiredFiles() map[string]string {
-	jailContent := fmt.Sprintf("[melisis]\nenabled = true\nfilter = melisis\nlogpath = /var/log/Melisis.txt\nmaxretry = 1\nfindtime = 5m\nbantime = 5d\naction = iptables-allports[name=MelisisHost]\n	iptables-allports[name=Melisis, chain=DOCKER-USER]", manager.LogFilePath)
+	jailContent := fmt.Sprintf("[melisis]\nenabled = true\nfilter = melisis\nlogpath = %s\nmaxretry = 1\nfindtime = 5m\nbantime = 5d\naction = iptables-allports[name=MelisisHost]\n	iptables-allports[name=Melisis, chain=DOCKER-USER]", manager.LogFilePath)
 	filterContent := "[Definition]\nfailregex = ^.*\\[BAN_MELISIS\\] IP: <HOST>.*$\nignoreregex ="
 
 	return map[string]string{
