@@ -1,4 +1,4 @@
-If you're curious to see the development process behind this tool, [click here](hhttps://zksec.xyz/post/?postuuid=ad9872c5-1fd9-45a7-b3d5-1fcfe7a3286c).
+If you're curious to see the development process behind this tool, [click here](https://zksec.xyz/post/?postuuid=ad9872c5-1fd9-45a7-b3d5-1fcfe7a3286c).
 
 *Note: this is written in Brazilian Portuguese.*
 <center>

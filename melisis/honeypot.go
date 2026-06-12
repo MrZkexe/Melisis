@@ -90,7 +90,10 @@ func (trap Trap) processChannels(channels <-chan ssh.NewChannel, user string) er
 	select {
 	case channel, ok := <-channels:
 		if !ok {
-			return nil
+			clientIP := IPAddress{Address: trap.Connection.RemoteAddr()}.ExtractIP()
+			trap.Connection.Close()
+			trap.Ban(clientIP, fmt.Sprintf("IP: %s authenticated then disconnected", clientIP))
+			return fmt.Errorf("connection closed: authenticated but did not conclude (%s)", clientIP)
 		}
 		hasSession = true
 		trap.handleSingleChannel(channel, user)
